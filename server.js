@@ -5,11 +5,12 @@ const app = express();
 //Install uuid: npm install uuid
 //then set uuid to const variable
 const {v4: uuidv4} = require('uuid');
-
 const server = require('http').Server(app);
 
 //after installing ejs, we can use it to render html by linking it to the server.js file
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
+
 
 app.get('/', (req, res) => {
   //after creating .get method, install nodemon globally --npm install -g nodemon
@@ -17,7 +18,6 @@ app.get('/', (req, res) => {
   // res.render('room');
   res.redirect(`/${uuidv4()}`);
 });
-
 app.get('/:room', (req, res) => {
     res.render('room', {roomId: req.params.room});
 });
