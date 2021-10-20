@@ -6,6 +6,7 @@ const app = express();
 //then set uuid to const variable
 const {v4: uuidv4} = require('uuid');
 const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 //after installing ejs, we can use it to render html by linking it to the server.js file
 app.set('view engine', 'ejs');
@@ -22,7 +23,11 @@ app.get('/:room', (req, res) => {
     res.render('room', {roomId: req.params.room});
 });
 
-
+io.on('connection', socket => {
+    socket.on('join-room', () => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
+        console.log("joined room");
+    })
+})
 //To run: --nodemon server.js
 
 
