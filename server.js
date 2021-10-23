@@ -24,8 +24,10 @@ app.get('/:room', (req, res) => {
 });
 
 io.on('connection', socket => {
-    socket.on('join-room', () => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
-        console.log("joined room");
+    socket.on('join-room', (roomId) => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
+        // console.log("joined room");
+        socket.join(roomId);
+        socket.to(roomId).broadcast.emit('user-connected');
     })
 })
 //To run: --nodemon server.js
