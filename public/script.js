@@ -4,6 +4,12 @@ const myVideo = document.createElement('video');
 const socket = io('/');
 myVideo.muted = true;
 
+var peer = new Peer(undefined, {
+    path: '/peerjs',
+    host: '/',
+    port: '3030'
+});
+
 let myVideoStream;
 navigator.mediaDevices.getUserMedia({
     video: true,
@@ -13,14 +19,19 @@ navigator.mediaDevices.getUserMedia({
     addVideoStream(myVideo, stream);
 })
 
-socket.emit('join-room', ROOM_ID);//MUST BE SAME ON SERVER.JS
-
-socket.on('user-connected', () => {
-    connectionToNewUser();
+peer.on('open', (id) => {
+  socket.emit("join-room", ROOM_ID, id); //MUST BE SAME ON SERVER.JS
+  console.log(id);
 });
 
-const connectionToNewUser = () => {
-    
+
+
+socket.on('user-connected', (userId) => {
+    connectionToNewUser(userId, stream);
+});
+
+const connectionToNewUser = (userId) => {//Make use of peer to peer via WEBRTC and peerjs
+    console.log('new user');
 }
 
 const addVideoStream = (video, stream) => {

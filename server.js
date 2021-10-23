@@ -7,12 +7,16 @@ const app = express();
 const {v4: uuidv4} = require('uuid');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const { ExpressPeerServer } = require("peer");
+const peerServer = ExpressPeerServer(server, {
+  debug: true
+});
 
 //after installing ejs, we can use it to render html by linking it to the server.js file
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
-
+app.use('/peerjs', peerServer);
 app.get('/', (req, res) => {
   //after creating .get method, install nodemon globally --npm install -g nodemon
   //   res.status(200).send('Hello World!');
@@ -24,17 +28,13 @@ app.get('/:room', (req, res) => {
 });
 
 io.on('connection', socket => {
-    socket.on('join-room', (roomId) => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
+    socket.on('join-room', (roomId, userId) => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
         // console.log("joined room");
         socket.join(roomId);
-        socket.to(roomId).broadcast.emit('user-connected');
+        socket.to(roomId).broadcast.emit('user-connected', userId);
     })
 })
 //To run: --nodemon server.js
-
-
-
-
 
 
 
