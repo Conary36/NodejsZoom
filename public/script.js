@@ -31,7 +31,7 @@ socket.on('user-connected', (userId) => {
 });
 
 const connectionToNewUser = (userId) => {//Make use of peer to peer via WEBRTC and peerjs
-    console.log('new user');
+    console.log('new user', userId);
 }
 
 const addVideoStream = (video, stream) => {
