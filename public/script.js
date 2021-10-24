@@ -13,10 +13,25 @@ var peer = new Peer(undefined, {
 let myVideoStream;
 navigator.mediaDevices.getUserMedia({
     video: true,
-    audio: true
+    audio: false
 }).then(stream => {
     myVideoStream = stream;
     addVideoStream(myVideo, stream);
+
+    peer.on('call', call => {
+        call.answer(stream);
+        const video = document.createElement('video');
+        call.on('stream', userVideoStream => {
+            addVideoStream(video, userVideoStream);
+        });
+    });
+
+    socket.on("user-connected", (userId) => {
+        setTimeout(() => {
+            
+      connectionToNewUser(userId, stream);
+        }, 1000);
+    });
 })
 
 peer.on('open', (id) => {
@@ -26,13 +41,21 @@ peer.on('open', (id) => {
 
 
 
-socket.on('user-connected', (userId) => {
-    connectionToNewUser(userId, stream);
-});
 
-const connectionToNewUser = (userId) => {//Make use of peer to peer via WEBRTC and peerjs
-    console.log('new user', userId);
+
+const connectionToNewUser = (userId, stream) => {//Make use of peer to peer via WEBRTC and peerjs
+    // console.log('new user', userId);  
+    const call = peer.call(userId, stream); //Call the new user
+    const video = document.createElement('video');
+    call.on('stream', userVideoStream => {
+        addVideoStream(video, userVideoStream);
+    })
+    call.on('close', () => {
+        video.remove();
+    });
 }
+
+
 
 const addVideoStream = (video, stream) => {
     video.srcObject = stream;

@@ -31,7 +31,7 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, userId) => {//MUST BE SAME ON SCRIPT.JS AND SERVER.JS
         // console.log("joined room");
         socket.join(roomId);
-        socket.to(roomId).broadcast.emit('user-connected', userId);
+        socket.to(roomId).emit(userId)//removed .broadcast.emit
     })
 })
 //To run: --nodemon server.js
